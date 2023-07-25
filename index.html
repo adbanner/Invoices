@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=League+Spartan:wght@500;700&family=Rubik:wght@300;500&family=Ubuntu:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="./style.css">
+
+    <script src="https://accounts.google.com/gsi/client" defer></script>
+    <title>Invoice-app</title>
+</head>
+
+<body>
+    <div class="message">
+        <div id="message"> New result</div>
+    </div>
+
+    <!-- Preloader -->
+    <div data-preloader class="preloader hidden">
+        <div data-preloader-line class="preloader-line "></div>
+    </div>
+
+
+    <!--Header    -->
+    <div class="header flex shadow">
+        <div class="logo">
+            <img src="https://cdn-icons-png.flaticon.com/512/3810/3810286.png">
+        </div>
+        <div class="hero flex">
+
+            <div class="hero-div flex">
+                <div id="theme_btn" class="theme-btn flex ">
+                </div>
+
+            </div>
+            <div class="hero-line"></div>
+            <div class="hero-div flex">
+                <div id="avatar" class="avatar  btn">
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <!-- Google button -->
+    <div id="g_id_onload" data-client_id="590428194289-qqaqgurloq4e5k17vmcgchr227i5np3t.apps.googleusercontent.com"
+        data-context="signin" data-callback="googleLogin" data-auto_select="true" data-itp_support="true"
+        data-auto_prompt="false">
+    </div>
+
+    <!-- Login popup -->
+    <div id="login_popup" class="popup grid grid-center hidden-">
+        <div class="grid gap-300">
+            <div class="grid gap-200">
+                <input data-input data-login id="login" class="input" placeholder="Login or Email" value="" />
+                <input data-input data-pass id="pass" type="password" class="input" placeholder="Password" value="" />
+                <span id="error-login" class="error-msg ff-size-300 hidden">Incorrect Login or Password</span>
+                <button class="button grid btn ff-size-400" data-login-btn>Log in
+                    <div data-loader="login" class="loader hidden"></div>
+                </button>
+                <span style="text-align: center;">or</span>
+                <div id="g_id_signin" class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"
+                    data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left">
+                </div>
+
+                <button class="test empty-button" onClick="testAccount()">Test account</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- User info -->
+    <div id="user_popup" class="popup grid grid-center align-center hidden">
+        <div class="popup-bg grid gap-200">
+            <div class="grid gap-200">
+                <p class="">User information</p>
+                <p class="ff-300">VItalii Zhuravskyi</p>
+                <p class="ff-300">flash@mavi.com.ua</p>
+            </div>
+            <div class="flex gap-200 flex-end ">
+                <div id="close_user_popup_btn" class="edit-btn button clr-edit btn ff-clr-100-to-7">Close</div>
+                <div id="log_out_btn" class="delete-btn button clr-delete btn ">Log out</div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <main id="main" class="main grid hidden">
+
+        <!-- Delete popup -->
+        <div id="delete_popup" class="popup grid grid-center align-center hidden">
+            <div class="popup-bg grid gap-200">
+                <div class="grid gap-200">
+                    <p class="">Confirm Deletion</p>
+                    <p class="ff-300">Are you sure you want to delete invoice #<span id="delete_id">XM9141</span> ? This
+                        action cannot be undone.</p>
+                </div>
+                <div class="flex gap-200 flex-end ">
+                    <div id="cancel_deletion_btn" class="edit-btn button clr-edit btn ff-clr-100-to-7">Cancel</div>
+                    <div id="totally_delete_btn" class="delete-btn button clr-delete btn ">Delete</div>
+                </div>
+            </div>
+        </div>
+
+        <!--   Fader   -->
+        <div id="fader" class="fader hidden"></div>
+
+
+        <div id="card_btns_mobile" class="invoice-card-btns_mobile flex gap-200 fixed hidden">
+            <div id="edit_invoice_btn_mobile" class="edit-btn button clr-edit btn ff-clr-100-to-7">Edit</div>
+            <div class="flex flex-end gap-200">
+                <div id="delete_invoice_btn_mobile" class="delete-btn button clr-delete btn">Delete</div>
+                <div id="mark_invoice_btn_mobile" class="mark-btn button clr-mark btn">Mark as Paid</div>
+            </div>
+        </div>
+
+        <div id="new_btns_mobile" class="edit-btns_mobile flex fixed hidden">
+            <div id="new_discard_btn" class="edit-btn button clr-edit btn ff-clr-100-to-7">Discard</div>
+            <div class="flex flex-end gap-200">
+                <div id="new_save_draft_btn" class="edit-btn-btn flex button clr-edit btn">Save as Draft <div
+                        data-loader="login" class="loader hidden"></div></button></div>
+                <div id="new_save_send_btn" class="mark-btn flex button clr-mark btn">Save & Send <div
+                        data-loader="login" class="loader hidden"></div></button></div>
+            </div>
+        </div>
+
+
+        <div id="edit_btns_mobile" class="edit-btns_mobile flex flex-end gap-200 fixed hidden">
+
+            <div id="edit_cancel_btn" class="edit-btn button clr-edit btn ff-clr-100-to-7">Cancel</div>
+            <div id="edit_save_btn" class="mark-btn button clr-mark btn">Save Changes</div>
+
+        </div>
+
+
+
+
+        <!-- Invoice and buttons  ---------------------------------------------------->
+        <div id="invoices" class="Invoices | container grid gap-300 hidden-">
+            <div class=" flex">
+                <div class="invoices-header">
+                    <h1>Invoices</h1>
+                    <div>
+                        <p class="ff-clr-300 "><span id="invoices_total">0 </span> invoices</p>
+                    </div>
+                </div>
+                <div class="filter flex gap-400">
+
+                    <div class="dropdown grid" data-dropdown>
+                        <button class="empty-button flex gap-300">
+                            <p id="filter_btn" class="filter-btn clr-ff-100 fw-bold btn flex" data-filter-btn>Filter
+                                <span class='by-status hidden'>&nbsp;by status</span>
+                            </p>
+                            <div class="arrow" style='rotate: -90deg'></div>
+                        </button>
+                        <div class="filter-menu-div">
+                            <div class="filter-menu bg2 grid gap-300 shadow" data-filter-menu>
+
+                                <div class="filter-item btn" data-filter="all">
+                                    <div class="icon-check"></div>
+                                    <p>All</p>
+                                </div>
+
+                                <div class="filter-item btn" data-filter="paid">
+                                    <div class="icon-check"></div>
+                                    <p>Paid</p>
+                                </div>
+                                <div class="filter-item btn" data-filter="pending">
+                                    <div class="icon-check"></div>
+                                    <p>Pending</p>
+                                </div>
+                                <div class="filter-item btn" data-filter="draft">
+                                    <div class="icon-check"></div>
+                                    <p>Draft</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="new_invoice_btn" class="new-invoice-btn button-new btn">
+                        <div class="new-invoice-btn-icon ">+</div>
+                        <p class="clr-ff-100-static fw-bold">New <span class="hidden">Invoice</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!--  Invoices container      -------------------------------------->
+            <div id="invoice-container" class="invoice-container grid gap-400">
+
+                <!--   Invoice       -->
+                <div id="invoice" class="invoice- bg1 hidden">
+                    <div class="id-and-name ">
+                        <div class="id-and-date">
+                            <div class="invoice_id">
+                                <span class="hash-tag">#</span>
+                                <span id="invoice_id">RT3081</span>
+                            </div>
+                            <div class="invoice-date">Due 19 Aug 2021</div>
+                        </div>
+                        <div id="client_name" class="client-name">Jensen Huang</div>
+                    </div>
+
+                    <div class="total-and-status">
+                        <div><span>£</span>
+                            <span id="invoice_total">1,800.90</span>
+                        </div>
+                        <div class="status-item paid">
+                            <span style='font-size: 2rem; margin:-7px; padding: 0'>&#8226;</span><span>Paid</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!--   Invoice-card   -------------------------------------------- -->
+        <div id="invoice_card" class="invoice-card | container grid hidden">
+            <div class=" grid gap-500">
+                <div class="empty-button flex flex-start gap-300">
+                    <div class="arrow"></div>
+                    <div id="go_back_btn" class="go-back-btn btn">Go back</div>
+                </div>
+                <div class="bg1 flex  shadow">
+                    <div class="invoice-card-header flex flex-between gap-500 ">
+                        <p class="ff-300">Status</p>
+                        <div id="card_status" class="status-item paid-">
+                            <span style='font-size: 1.6rem; margin:-4px; padding: 0; '>&#8226;</span><span
+                                id="card_status_name" class="fw-bold">Paid</span>
+                        </div>
+                    </div>
+                    <div class="invoice-card-btns gap-200">
+                        <div id="edit_invoice_btn" class="edit-btn button clr-edit btn ff-clr-100-to-7">Edit</div>
+                        <div id="delete_invoice_btn" class="delete-btn button clr-delete btn">Delete</div>
+                        <div id="mark_invoice_btn" class="mark-btn button clr-mark btn">Mark as Paid</div>
+                    </div>
+                </div>
+
+                <!--    Card    --->
+                <div class="card | bg1 shadow">
+                    <div class="grid gap-400">
+                        <!-- Card Header  -->
+
+                        <div class="card-header grid gap-400 ">
+                            <div class="">
+                                <div class="invoice_id fw-bold">
+                                    <span class="hash-tag ">#</span>
+                                    <span id="invoice_card_id">RT3080</span>
+                                </div>
+                                <div id="invoice_description" class="description ff-400">Graphic Designer</div>
+                            </div>
+                            <div class="">
+                                <p class="invoice-card-adress ff-300">
+                                    <span id="sender_street">19 Union Terrace</span><br>
+                                    <span id="sender_city">London</span><br>
+                                    <span id="sender_postCode">E1 3EZ</span><br>
+                                    <span id="sender_country">United Kingdom</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-800 align-start flex-start">
+
+                            <div class="">
+                                <div class="grid gap-500">
+                                    <div class="grid gap-200">
+                                        <p class="ff-300">Invoice Date</p>
+                                        <p id="invoice_createdAt" class="">21 Aug 2021</p>
+                                    </div>
+                                    <div class="grid gap-200">
+                                        <p class="ff-300">Payment Due</p>
+                                        <p id="invoice_paymentDue" class="">20 Sep 2021</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="">
+                                <div class="grid gap-400">
+                                    <div class="grid gap-200">
+                                        <p class="ff-300">Bill To</p>
+
+                                        <div class="grid gap-200">
+                                            <p id="invoice_clientName">Alex Grim</p>
+                                            <p class="ff-300">
+                                                <span id="client_street">19 Union Terrace</span><br>
+                                                <span id="client_city">London</span><br>
+                                                <span id="client_postCode">E1 3EZ</span><br>
+                                                <span id="client_country">United Kingdom</span>
+
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="">
+                                <div class="grid gap-400">
+                                    <div class="grid gap-200">
+                                        <p class="ff-300">Sent to</p>
+                                        <p id="invoice_clientEmail" class="">alexgrim@mail.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div id="card_items" class="card-items bg2 grid gap-300 hidden-">
+
+                                <div class="flex">
+                                    <div class=" grid gap-0">
+                                        <p>Banner Design</p>
+                                        <span class="ff-clr-400">1 x £ 156.00</span>
+                                    </div>
+                                    <p>£ 156.00</p>
+                                </div>
+
+                            </div>
+
+                            <div class="card-amount bg3 grid gap-300">
+
+                                <div class="flex flex-between ">
+                                    <p class="ff-size-300 ff-clr-100-static">Amount Due</p>
+                                    <h2 class="ff-clr-100-static">£ <span id="invoice_card_total">556.00</span></h2>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--   New + Edit Invoice  ------------------------------------------------- -->
+        <div id="invoice_details" class="invoice-details | container grid hidden">
+            <div class=" grid gap-500">
+
+                <!--    Card     -->
+
+                <div class="grid gap-400">
+                    <div>
+                        <h2 id="new_invoice_title" class="description ff-400 hidden">New Invoice</h2>
+                        <div id="edit_invoice_title" class="invoice_id fw-bold ">
+                            <span>Edit </span><span class="hash-tag ">#</span>
+                            <span id="edit_invoice_card_id">RT3080</span>
+                        </div>
+                    </div>
+                    <!--    Bill from        -->
+                    <div class="bill-from grid gap-400 hidden-">
+                        <p class="ff-600">Bill From</p>
+
+                        <div class="">
+                            <div class="grid gap-200">
+                                <p class="ff-300 flex">Street Address <span class="error-msg"></span></p>
+                                <input data-input id="sender_street_input" class="input" /></input>
+                            </div>
+                        </div>
+
+                        <!--  City POst Country        -->
+                        <div class="city-post-country grid gap-400">
+
+                            <div class="grid grid-2-columns gap-400">
+                                <div class="grid gap-200">
+                                    <p class="ff-300 flex">City<span class="error-msg"></span></p>
+                                    <input data-input id="sender_city_input" class="input" /></input>
+                                </div>
+
+                                <div class="grid gap-200">
+                                    <p class="ff-300 flex">Post Code<span class="error-msg"></span></p>
+                                    <input data-input id="sender_postCode_input" class="input" /></input>
+                                </div>
+                            </div>
+
+                            <div class="grid gap-200">
+                                <p class="ff-300 flex">Country<span class="error-msg"></span></p>
+                                <input data-input id="sender_country_input" class="input" /></input>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="spacer"></div>
+
+                    <!--    Bill to        -->
+                    <div class="bill-to grid gap-400 hidden-">
+                        <p class="ff-600">Bill To</p>
+
+                        <div class="grid gap-400">
+                            <div class="grid gap-200">
+                                <p class="ff-300 flex">Client’s Name<span class="error-msg"></span></p>
+                                <input data-input id="clientName_input" class="input"></input>
+                            </div>
+                            <div class="grid gap-200">
+                                <p class="ff-300 flex">Client’s Email<span class="error-msg"></span></p>
+                                <input data-input="client-email" id="clientEmail_input" class="input"></input>
+                            </div>
+                            <div class="grid gap-200">
+                                <p class="ff-300 flex">Street Address<span class="error-msg"></span></p>
+                                <input data-input id="client_street_input" class="input"></input>
+                            </div>
+                        </div>
+
+                        <!--  City POst Country        -->
+                        <div class="city-post-country grid gap-400">
+
+                            <div class="grid grid-2-columns gap-400">
+                                <div class="grid gap-200">
+                                    <p class="ff-300 flex">City<span class="error-msg"></span></p>
+                                    <input data-input id="client_city_input" class="input" /></input>
+                                </div>
+
+                                <div class="grid gap-200">
+                                    <p class="ff-300 flex">Post Code<span class="error-msg"></span></p>
+                                    <input data-input id="client_postCode_input" class="input" /></input>
+                                </div>
+                            </div>
+
+                            <div class="grid gap-200">
+                                <p class="ff-300 flex">Country<span class="error-msg"></span></p>
+                                <input data-input id="client_country_input" class="input" /></input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="spacer"></div>
+
+                    <!--    Invoice date        -->
+                    <div class="bill-to grid gap-400 hidden-">
+                        <!--  Invoice date        -->
+                        <div class="invoice-date-div grid gap-400">
+
+                            <div id="date-and-terms" class="date-and-terms grid gap-400">
+                                <div class="grid gap-200">
+                                    <p class="ff-300 btn">Invoice Date</p>
+
+                                    <div class="createdAt-input btn">
+                                        <input data-input id="createdAt_input" class="input"></input>
+                                        <span class="error-msg hidden"></span>
+                                        <div>
+                                            <div class="calendar-icon"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="grid gap-200">
+                                    <p class="ff-300">Payment Terms </p>
+                                    <div class="paymentDue-input btn">
+                                        <input data-input id="paymentTerms_input" class="input"></input>
+                                        <span class="error-msg hidden"></span>
+                                        <div>
+                                            <div class="arrow"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="grid gap-200">
+                                <p class="ff-30 flex">Project Description<span class="error-msg"></span></p>
+                                <input data-input id="description_input" class="input"></input>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="spacer"></div>
+
+                    <!--  Item List              -->
+                    <p class="ff-450">Item List</p>
+                    <div id="input_items" class="grid gap-400">
+
+                        <div class="item-list grid gap-400 hidden">
+                            <div class="grid gap-200">
+                                <p class="ff-300">Item Name</p>
+                                <input data-input id="item_description" class="input"></input>
+                            </div>
+                            <div class="new-list-grid grid gap-300">
+
+                                <div class="grid gap-200">
+                                    <p class="ff-300">Qty.</p>
+                                    <input data-input id="item_quantity" class="input" type="number"
+                                        maxlength="4"></input>
+                                </div>
+
+                                <div class="grid gap-200">
+                                    <p class="ff-300">Price</p>
+                                    <input data-input id="item_price" class="input" type="number" inputmode="numeric"
+                                        pattern="\d*"></input>
+                                </div>
+
+                                <div class="grid gap-200">
+                                    <p class="ff-300">Total</p>
+                                    <p id="item_total" class="total-field"> 156.00</p>
+                                </div>
+                                <div class="grid gap-200">
+                                    <p class="ff-300"></p>
+                                    <div class="bin btn">
+                                        </bin>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="add_new_item_btn" class="button btn clr-new-item ff-clr-5-to-7"> Add New Item</div>
+                    <span id="input_alert" class="error-msg"></span>
+                </div>
+
+
+            </div>
+
+
+
+        </div>
+        <!--    end main      -->
+    </main>
+
+    <div class=""></div>
+    <script src="./js/getElement.js"></script>
+
+    <script src="./script.js"></script>
+    <script src="./js/userLogin.js"></script>
+    <script src="./js/googleLogin.js"></script>
+    <script src="./js/utilities.js"></script>
+    <script src="./js/checkInputs.js"></script>
+    <script src="./js/invoiceData.js"></script>
+    <script src="./js/addNewItem.js"></script>
+    <script src="./js/changeTheme.js"></script>
+    <script src="./js/saveInvoice.js"></script>
+    <script src="./js/deleteInvoice.js"></script>
+    <script src="./js/filterInvoices.js"></script>
+    <script src="./js/randomString.js"></script>
+    <script src="./js/sendRequest.js"></script>
+    <script src="./js/onResize.js"></script>
+    <script src="./js/buttonEvents.js"></script>
+</body>
+
+</html>
